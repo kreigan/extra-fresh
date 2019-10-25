@@ -1,0 +1,2 @@
+### v0.1.0 (25/10/2019)
+- Translate 3rd-line tags of Jira issues to URL referring to [https://jira.int.zone](https://jira.int.zone). Works for a certain ticket or a ticket filter in both table and card layouts.
