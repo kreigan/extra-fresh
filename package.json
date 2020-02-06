@@ -1,7 +1,7 @@
 {
   "name": "extra-fresh",
   "version": "0.1.0",
-  "description": "Adds extra functionality to Freshdesk.",
+  "description": "Adds extra functionality to Freshdesk",
   "main": "extra-fresh.js",
   "directories": {
     "test": "test"
@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/alexbrownies/extra-fresh.git"
+    "url": "git+https://github.com/kreigan/extra-fresh.git"
   },
   "keywords": [
     "freshdesk"
@@ -26,7 +26,7 @@
   "author": "Aleksandr Noskov",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/alexbrownies/extra-fresh/issues"
+    "url": "https://github.com/kreigan/extra-fresh/issues"
   },
-  "homepage": "https://github.com/alexbrownies/extra-fresh#readme"
+  "homepage": "https://github.com/kreigan/extra-fresh#readme"
 }

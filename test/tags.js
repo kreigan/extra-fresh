@@ -3,6 +3,7 @@ const jsdom = require("jsdom"),
     expect = require('chai').expect,
     lib = require('../src/fresh-lib');
 
+var baseUrl = "http://localhost.com";
 const tagsForTest = [
     "TST-1",
     "1234",
@@ -11,10 +12,12 @@ const tagsForTest = [
     "tag",
     "&nbsp;",
     "---",
-    "{{123}}"
+    "{{123}}",
+    "TST-1",
+    "TST-2"
 ];
 
-let document, screen;
+let document, screen, tags;
 
 describe('Tags', () => {
     describe('in ticket', () => {
@@ -28,8 +31,7 @@ describe('Tags', () => {
                 }
 
                 const list = tagTemplate.parentElement.parentElement;
-                tagsForTest.slice(1).forEach(tagValue => {
-
+                tagsForTest.slice(1).forEach(() => {
                     list.appendChild(list.firstElementChild.cloneNode(true));
                 });
 
@@ -38,16 +40,12 @@ describe('Tags', () => {
                     tag.innerHTML = tagsForTest[index];
                 }
                 screen = new lib.TicketView(document.getElementById('ticket-details'));
+                tags = screen.getTags();
             }));
-        it('should be fetched', (done) => {
-            var tags = screen.getTags();
-            expect(tags).to.have.lengthOf(tagsForTest.length);
-            done();
-        });
-        it('should be converted', (done) => {
-            var result = 1;
-            expect(result).to.be.equal(1);
-            done();
+        it('should be converted', () => {
+            expect(tags).to.have.lengthOf(3);
+            tags.forEach(tag => lib.convertTagToUrl(tag, baseUrl));
+            expect(document.querySelectorAll("li a")).to.have.lengthOf(3);
         });
     })
 });

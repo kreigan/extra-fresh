@@ -1,10 +1,3 @@
-_checkTagValidity = tag => {
-    const isValidTag = /^[a-z]{2,}-\d{1,10}$/i.test(tag.innerText) != false;
-    // No need to convert already processed tags
-    const isTranslated = tag.parentNode.tagName == 'A';
-    return isValidTag && !isTranslated;
-}
-
 // A base class for all screens, is not supposed to be instantiated directly
 class ScreenType {
     constructor(root) {
@@ -60,37 +53,46 @@ class TicketView extends ScreenType {
         this.tagElement = 'div.ticket-tags span.tag-options';
     }
 
-    getTags = () => {
-        let tags = [];
-        let ticketTags = this.root.querySelectorAll(this.tagElement);
-        tags.push(Array.from(ticketTags.filter(_checkTagValidity)));
-        return tags;
-    }
+    getTags = () => getValidTags(this.root.querySelectorAll(this.tagElement));
+}
+
+function getValidTags(tags) {
+    let validTags = [];
+    for (let tag of tags) {
+        if (_checkTagValidity(tag)) {
+            validTags.push(tag);
+        }
+    };
+    return validTags;
+}
+
+function _checkTagValidity(tag) {
+    const isValidTag = /^[a-z]{2,}-\d{1,10}$/i.test(tag.innerHTML) != false;
+    // No need to convert already processed tags
+    const isTranslated = tag.parentNode.tagName == 'A';
+    return isValidTag && !isTranslated;
+}
+
+function _getUrlFromText(text, baseUrl) {
+    return new URL(text, baseUrl).href;
 }
 
 // Creates a link element from a text.
-function _jiraLinkFromText(document, text) {
-    let link = document.createElement("a");
-    link.href = JIRALINK + text.toUpperCase();
-    return link;
-};
+function convertTagToUrl(tag, baseUrl) {
+    const tagValue = new String(tag.innerHTML).trim().toUpperCase();
+    let parsedUrl = _getUrlFromText(tagValue, baseUrl);
 
+    let parentTag = tag.parentElement;
+    let link = tag.ownerDocument.createElement("a");
+    link.setAttribute("href", parsedUrl.href);
+    link.setAttribute("target", "_blank");
 
-function transformTicketTags(ticketTags) {
-    // Choose only tags where text follows the pattern.
-    let jiraTags = ticketTags.filter(tag => _checkTagValidity);
-    if (jiraTags.length) {
-        return;
-    }
-    console.debug("Ticket tags to proces:", jiraTags.length);
-    // Wrap the tag with a link element.
-    jiraTags.forEach(function (tag) {
-        let link = _jiraLinkFromText(tag.innerText);
-        tag.parentNode.insertBefore(link, tag);
-        link.appendChild(tag);
-    });
-};
+    parentTag.insertBefore(link, tag);
+    link.appendChild(tag);
+}
 
 exports.CardView = CardView;
 exports.TableView = TableView;
 exports.TicketView = TicketView;
+
+exports.convertTagToUrl = convertTagToUrl;
