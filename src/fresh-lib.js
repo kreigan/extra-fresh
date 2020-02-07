@@ -9,18 +9,29 @@ class ScreenType {
 class FilterView extends ScreenType {
     constructor(root) {
         super(root);
-        this.ticketsBlock = 'tbody.lt-body';
+        this.ticketsBlock = 'div.card-view.lt-body-wrap table tbody';
         this.tagElement = 'span.list-item';
     }
 
+    static hiddenSelector = 'div#ember-basic-dropdown-wormhole > div.ember-basic-dropdown-content > div.list-item';
+
     // Enumerate tickets and return an array of their tags
     getTags = () => {
-        let tickets = Array.from(this.root.querySelector(this.ticketsBlock).children);
-        let tags = [];
-        for (let i = 0; i < tickets.length; i++) {
-            let ticketTags = tickets[i].querySelectorAll(this.tagElement);
-            tags.push(Array.from(ticketTags));
+        let tickets = this.root.querySelector(this.ticketsBlock);
+        if (!tickets) {
+            throw `Couldn't find the ticket root block '${this.ticketsBlock}'`;
         }
+
+        let tags = [];
+        for (let ticket of tickets.children) {
+            let ticketTags = ticket.querySelectorAll(this.tagElement);
+            for (let tag of ticketTags) {
+                if (_checkTagValidity(tag)) {
+                    tags.push(tag);
+                }
+            }
+        }
+
         return tags;
     }
 }
@@ -29,7 +40,7 @@ class FilterView extends ScreenType {
 class CardView extends FilterView {
     constructor(root) {
         super(root);
-        this.tagElement = "div.ticket-tag-wrap " + this.tagElement;
+        this.tagElement = `div.ticket-tag-wrap ${this.tagElement}`;
     }
 }
 
@@ -37,7 +48,7 @@ class CardView extends FilterView {
 class TableView extends FilterView {
     constructor(root) {
         super(root);
-        this.tagElement = "div.show-more-list-wrapper " + this.tagElement;
+        this.tagElement = `div.show-more-list-wrapper ${this.tagElement}`
     };
 
     // Check if tags are displayed at all
@@ -83,14 +94,15 @@ function convertTagToUrl(tag, baseUrl) {
     let parsedUrl = _getUrlFromText(tagValue, baseUrl);
 
     let parentTag = tag.parentElement;
-    let link = tag.ownerDocument.createElement("a");
-    link.setAttribute("href", parsedUrl.href);
-    link.setAttribute("target", "_blank");
+    let link = tag.ownerDocument.createElement('a');
+    link.setAttribute('href', parsedUrl.href);
+    link.setAttribute('target', '_blank');
 
     parentTag.insertBefore(link, tag);
     link.appendChild(tag);
 }
 
+exports.FilterView = FilterView;
 exports.CardView = CardView;
 exports.TableView = TableView;
 exports.TicketView = TicketView;
