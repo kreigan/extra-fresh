@@ -7,8 +7,10 @@ class ScreenType {
 
 // A base class for all filter views
 class FilterView extends ScreenType {
-    constructor(root) {
+    constructor(root, ticketsRootSelector, tagElementSelector) {
         super(root);
+        this.ticketsRootSelector = ticketsRootSelector;
+        this.tagElementSelector = tagElementSelector;
         this.ticketsBlock = 'div.card-view.lt-body-wrap table tbody';
         this.tagElement = 'span.list-item';
     }
@@ -38,16 +40,16 @@ class FilterView extends ScreenType {
 
 // Class for a card layout screen of a filter view
 class CardView extends FilterView {
-    constructor(root) {
-        super(root);
+    constructor(root, ticketsRootSelector, tagElementSelector) {
+        super(root, ticketsRootSelector, tagElementSelector);
         this.tagElement = `div.ticket-tag-wrap ${this.tagElement}`;
     }
 }
 
 // Class for a table layout screen of a filter view
 class TableView extends FilterView {
-    constructor(root) {
-        super(root);
+    constructor(root, ticketsRootSelector, tagElementSelector, ) {
+        super(root, ticketsRootSelector, tagElementSelector);
         this.tagElement = `div.show-more-list-wrapper ${this.tagElement}`
     };
 
@@ -59,7 +61,7 @@ class TableView extends FilterView {
 }
 
 class TicketView extends ScreenType {
-    constructor(root) {
+    constructor(root, tagElementSelector) {
         super(root);
         this.tagElement = 'div.ticket-tags span.tag-options';
     }
